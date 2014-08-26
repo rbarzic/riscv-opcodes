@@ -3,6 +3,9 @@
 import math
 import sys
 import tokenize
+import argparse
+
+
 
 namelist = []
 match = {}
@@ -683,6 +686,30 @@ def make_chisel():
   print '  }'
   print '}'
 
+
+def get_args():
+    """
+    Get command line arguments    
+    """
+
+    parser = argparse.ArgumentParser(description='Generate instruction description in various format')
+    parser.add_argument('-tex',      action='store_true',dest='tex', 
+                    help='Generate Latex table')
+    parser.add_argument('-chisel',action='store_true',dest='chisel', 
+                    help='Generate chisel/Scala instruction description')
+
+    parser.add_argument('--c',action='store_true',dest='c', 
+                    help='Generate C header files')
+
+    
+
+    parser.add_argument('--version', action='version', version='%(prog)s 0.01')
+
+
+    return parser.parse_args()
+
+    
+
 for line in sys.stdin:
   line = line.partition('#')
   tokens = line[0].split()
@@ -746,11 +773,15 @@ for line in sys.stdin:
   match[name] = mymatch
   namelist.append(name)
 
-if sys.argv[1] == '-tex':
+
+args = get_args()
+
+
+if args.tex: 
   make_latex_table()
-elif sys.argv[1] == '-chisel':
+elif args.chisel:
   make_chisel()
-elif sys.argv[1] == '-c':
+elif args.c:
   make_c(match,mask)
 else:
   assert 0
